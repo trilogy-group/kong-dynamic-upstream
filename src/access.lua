@@ -1,5 +1,8 @@
 local url = require "net.url"
 
+local balancer_execute = require("kong.core.balancer").execute
+
+
 local _M = {}
 
 local function buildHostHeader(newHost)
@@ -32,9 +35,27 @@ end
 
 function _M.execute(conf)
   local hostHeader = buildHostHeader(conf.replacement_url)
-  ngx.req.set_header("host", hostHeader)
-  ngx.var.upstream_host = hostHeader
-  ngx.ctx.upstream_url = replaceHost(ngx.ctx.upstream_url, conf.replacement_url)
+--  ngx.req.set_header("host", hostHeader)
+  local ba = ngx.ctx.balancer_address
+  if conf.host then
+    ba.host = conf.host
+  end
+  if conf.port then
+    ba.port = conf.port
+  end
+  local ok, err = balancer_execute(ba)
+  if not ok then
+    return responses.send_HTTP_INTERNAL_SERVER_ERROR("failed the initial "..
+      "dns/balancer resolve for '"..balancer_address.host..
+      "' with: "..tostring(err))
+  end
+  ngx.var.upstream_host = ba.hostname..":"..ba.port
+
+  ngx.log(ngx.DEBUG, "ip: " .. ngx.ctx.balancer_address.ip)
+  ngx.log(ngx.DEBUG, "port: " .. ngx.ctx.balancer_address.port)
+  ngx.log(ngx.DEBUG, "hostname: " .. tostring(ngx.ctx.balancer_address.hostname))
+  ngx.log(ngx.DEBUG, "hostHeader: " .. tostring(hostHeader))
+  ngx.log(ngx.DEBUG, "ngx.var.upstream_host: " .. tostring(ngx.var.upstream_host))
 end
 
 return _M

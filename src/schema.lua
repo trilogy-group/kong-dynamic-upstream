@@ -1,5 +1,6 @@
 return {
   fields = {
-    replacement_url = { required = true, type = "url" }
+    host = { required = true, type = "string" },
+    port = { required = false, type = "number" }
   }
 }
