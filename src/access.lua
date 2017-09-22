@@ -35,7 +35,6 @@ end
 
 function _M.execute(conf)
   local hostHeader = buildHostHeader(conf.replacement_url)
---  ngx.req.set_header("host", hostHeader)
   local ba = ngx.ctx.balancer_address
   if conf.host then
     ba.host = conf.host
@@ -45,17 +44,14 @@ function _M.execute(conf)
   end
   local ok, err = balancer_execute(ba)
   if not ok then
-    return responses.send_HTTP_INTERNAL_SERVER_ERROR("failed the initial "..
-      "dns/balancer resolve for '"..balancer_address.host..
-      "' with: "..tostring(err))
+      ngx.log(ngx.ERROR,"Can`t change uptream: "..tostring(err))
   end
   ngx.var.upstream_host = ba.hostname..":"..ba.port
 
-  ngx.log(ngx.DEBUG, "ip: " .. ngx.ctx.balancer_address.ip)
-  ngx.log(ngx.DEBUG, "port: " .. ngx.ctx.balancer_address.port)
-  ngx.log(ngx.DEBUG, "hostname: " .. tostring(ngx.ctx.balancer_address.hostname))
-  ngx.log(ngx.DEBUG, "hostHeader: " .. tostring(hostHeader))
-  ngx.log(ngx.DEBUG, "ngx.var.upstream_host: " .. tostring(ngx.var.upstream_host))
+  ngx.log(ngx.DEBUG, "ip: "..ba.ip)
+  ngx.log(ngx.DEBUG, "port: "..ba.port)
+  ngx.log(ngx.DEBUG, "hostname: "..ba.hostname)
+  ngx.log(ngx.DEBUG, "ngx.var.upstream_host: "..ngx.var.upstream_host)
 end
 
 return _M
