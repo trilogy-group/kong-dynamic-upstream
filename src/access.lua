@@ -44,14 +44,14 @@ function _M.execute(conf)
   end
   local ok, err = balancer_execute(ba)
   if not ok then
-      ngx.log(ngx.ERROR,"Can`t change uptream: "..tostring(err))
+      -- ngx.log(ngx.ERROR,"Can`t change uptream: "..tostring(err))
   end
   ngx.var.upstream_host = ba.hostname..":"..ba.port
 
-  ngx.log(ngx.DEBUG, "ip: "..ba.ip)
-  ngx.log(ngx.DEBUG, "port: "..ba.port)
-  ngx.log(ngx.DEBUG, "hostname: "..ba.hostname)
-  ngx.log(ngx.DEBUG, "ngx.var.upstream_host: "..ngx.var.upstream_host)
+--  ngx.log(ngx.DEBUG, "ip: "..ba.ip)
+--  ngx.log(ngx.DEBUG, "port: "..ba.port)
+--  ngx.log(ngx.DEBUG, "hostname: "..ba.hostname)
+--  ngx.log(ngx.DEBUG, "ngx.var.upstream_host: "..ngx.var.upstream_host)
 end
 
 return _M
