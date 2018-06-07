@@ -34,7 +34,7 @@ local function replaceHost(url, newHost)
 end
 
 function _M.execute(conf)
-  local hostHeader = buildHostHeader(conf.replacement_url)
+  local hostHeader = buildHostHeader(conf.host)
   local ba = ngx.ctx.balancer_address
   if conf.host then
     ba.host = conf.host
