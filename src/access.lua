@@ -1,6 +1,6 @@
 local url = require "net.url"
 
-local balancer_execute = require("kong.core.balancer").execute
+-- local balancer_execute = require("kong.core.balancer").execute
 
 
 local _M = {}
