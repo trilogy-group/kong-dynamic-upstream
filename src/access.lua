@@ -42,17 +42,31 @@ function _M.execute(conf)
   if conf.port then
     ba.port = conf.port
   end
-  local ok, err = balancer_execute(ba)
-  if not ok then
-      ngx.log(ngx.WARN,"Can't change uptream: "..tostring(err))
+--  local ok, err = balancer_execute(ba)
+--  if not ok then
+--      ngx.log(ngx.WARN,"Can't change uptream: "..tostring(err))
+--  end
+  
+  if ba.host then
+    if ba.port then
+      ngx.var.upstream_host = ba.host..":"..ba.port
+     end
   end
   
-  ngx.var.upstream_host = ba.host..":"..ba.port
-
-  ngx.log(ngx.WARN, "ip: "..ba.ip)
-  ngx.log(ngx.WARN, "port: "..ba.port)
-  ngx.log(ngx.WARN, "hostname: "..ba.hostname)
- ngx.log(ngx.WARN, "ngx.var.upstream_host: "..ngx.var.upstream_host)
+  if ba.ip then
+    ngx.log(ngx.WARN, "ip: "..ba.ip)
+  end 
+  
+  if ba.port then
+    ngx.log(ngx.WARN, "port: "..ba.port)
+  end
+  
+  if ba.hostname then
+    ngx.log(ngx.WARN, "hostname: "..ba.hostname)
+  end
+ 
+  ngx.log(ngx.WARN, "ngx.var.upstream_host: "..ngx.var.upstream_host)
+  
 end
 
 return _M
